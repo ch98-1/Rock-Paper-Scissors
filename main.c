@@ -76,8 +76,13 @@ void quit(void){//write current round to file
 
 char choose(void){//choose rock, paper, or scissors
 	unsigned long int n = rounds;//number of rounds
-	char p = play[n - 1].p, c = play[n - 1 ].c;//player and computer
-	if (p == c || n == 0 || p == 'q'){//if it was a tie or the first game
+	if (n == 0){//if it was the first game
+		srand(time(NULL) + clock());//seed rand
+		int r = rand() % 3;//get rand
+		return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
+	}
+	char p = play[n - 1].p, c = play[n - 1].c;//player and computer
+	if (p == c || n == 0){//if it was a tie or the first game
 		srand(time(NULL) + clock());//seed rand
 		int r = rand()%3;//get rand
 		return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
