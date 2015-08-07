@@ -174,9 +174,8 @@ int main(int argc, char *argv[]){
 	atexit(quit);
 	while (1){
 		char input[256];//input value
-		switch (gets(input)[0]){//chech the first characterof string
-		case EOF:
-			goto exit;//exit
+		if(scanf("%s", input) == EOF) goto exit;//read line and exit if at end of file
+		switch (input[0]){//chech the first characterof string
 		case 'q':
 			goto exit;//exit
 		case 'Q':
