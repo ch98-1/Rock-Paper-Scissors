@@ -75,7 +75,23 @@ void quit(void){//write current round to file
 }
 
 char choose(void){//choose rock, paper, or scissors
-	return 'r';//allways rock for test
+	unsigned long int n = rounds;//number of rounds
+	char p = play[n - 1].p, c = play[n - 1 ].c;//player and computer
+	if (p == c || n == 0 || p == 'q'){//if it was a tie or the first game
+		srand(time(NULL) + clock());//seed rand
+		int r = rand()%3;//get rand
+		return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
+	}
+	else if ((p == 'r' && c == 's') || (p == 'p' && c == 'r') || (p == 's' && c == 'p')){//if player wins
+		switch (c){//go backwords around winning triangle
+		case 'r':return 's';
+		case 'p':return 'r';
+		case 's':return 'p';
+		}
+	}
+	else{//if computer wins
+		return p;//play what they just play'd
+	}
 }
 
 char *get_string(char p){//get string name for r, p, and s
