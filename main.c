@@ -160,7 +160,7 @@ int main(int argc, char *argv[]){
 		strcpy(login, strtok(argv[1], "\\/;:\"\'+=!@#$%^&*()|~`?.,<>\a\b\f\n\r\t\v"));//remove all unneeded characters and copy argument as login
 	}
 	last = clock();//reset clock at login
-	printf("Logging in as %s\n", login);//print message about login
+	printf("Loading...\n");//print message about login
 	strcpy(filename, login);//copy login
 	strcat(filename, ".txt");//add file extension
 	rounds = 0;//reset array size
@@ -176,6 +176,7 @@ int main(int argc, char *argv[]){
 		fclose(save);//close file
 	}
 	save = fopen(filename, "ab");//open or create file
+	printf("Logging in as %s\n", login);//print message about login
 	atexit(quit);
 	while (1){
 		char input[256];//input value
