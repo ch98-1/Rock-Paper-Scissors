@@ -6,3 +6,4 @@ Username of "guest" will login as a guest.
 After that command, you can type in any word starting with 'r' or 'R' to play as rock, 'p' or 'P' to play as paper, and 's' or 'S' to play as scissors.  
 Any command starting with 'e', 'E', 'q', or 'Q' will act as exit command quitting the game. 
 If login was "help", "-help", "--help" or command started with 'h' or 'H', it will print out the help message 
+Command starting with 'c' or 'C' will count the win, tie and loss of the current login.

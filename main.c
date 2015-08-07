@@ -52,7 +52,7 @@ unsigned char gettime(void){//get time in seconds since last call to this functi
 }
 
 void help(void){//print out usage
-	printf("To start, do \"rps {name}\" to login as that user, and do \"rpc\" to login as guest user.\nEach new user will create a new save file in running directory containing all rounds play'd by that user, time since last round, and when he started or quit.\nUsername of \"guest\" will login as a guest.\nAfter that command, you can type in any word starting with \'r\' or \'R\' to play as rock, \'p\' or \'P\' to play as paper, and 's' or 'S' to play as scissors.\nAny command starting with \'e\', \'E\', \'q\', or \'Q\' will act as exit command quitting the game.\nIf login was \"help\", \"-help\", \"--help\" or command started with \'h\' or \'H\', it will print out the help message\n");
+	printf("To start, do \"rps {name}\" to login as that user, and do \"rpc\" to login as guest user.\nEach new user will create a new save file in running directory containing all rounds play'd by that user, time since last round, and when he started or quit.\nUsername of \"guest\" will login as a guest.\nAfter that command, you can type in any word starting with \'r\' or \'R\' to play as rock, \'p\' or \'P\' to play as paper, and 's' or 'S' to play as scissors.\nAny command starting with \'e\', \'E\', \'q\', or \'Q\' will act as exit command quitting the game.\nIf login was \"help\", \"-help\", \"--help\" or command started with \'h\' or \'H\', it will print out the help message\nCommand starting with \'c\' or \'C\' will count the win, tie and loss of the current login.\n");
 }
 
 void add(char p, char c, unsigned char t){//add data to array
@@ -118,6 +118,25 @@ void result(char p, char c){//display result from computer calculation and playr
 	else{//if computer wins
 		printf("The computer won\n");//display result
 	}
+}
+
+void count(void){
+	unsigned long int w = 0, t = 0, l = 0, i;//win's ties, and losses
+	char p, c;//player and computer
+	for (i = 0; i < rounds; i++){//for each object
+		p = play[i].p, c = play[i].c;//player and computer
+		if (p == 'q') continue;//skip checking if it was quit
+		if (p == c){//if it was a tie
+			t++;//increment tie
+		}
+		else if ((p == 'r' && c == 's') || (p == 'p' && c == 'r') || (p == 's' && c == 'p')){//if you win
+			w++;//incrememnt win
+		}
+		else{//if computer wins
+			l++;//increment loss
+		}
+	}
+	printf("You won %lu times\nYou lost %lu times\nYou ties %lu times\n", w, l, t);//print out the result
 }
 
 int main(int argc, char *argv[]){
@@ -189,6 +208,12 @@ int main(int argc, char *argv[]){
 			break;
 		case 's':
 			result('s', choose());//let computer process the input
+			break;
+		case 'C':
+			count();//count number of win, tie and loss for current player
+			break;
+		case 'c':
+			count();//count number of win, tie and loss for current player
 			break;
 		default:
 			help();//display help
