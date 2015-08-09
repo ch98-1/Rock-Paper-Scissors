@@ -26,6 +26,10 @@ SOFTWARE.
 #include <time.h>
 #include <limits.h>
 
+#define MAX 10 //maximum number of rounds to compare. n is number of rounds total
+#define MIN 3 //minimul number of rounds to compare. n is number of rounds total
+#define MAX_HIST 500000 //maximum number of history to look up
+
 char login[256];//login name
 
 char filename[256];//filename for user
@@ -42,7 +46,7 @@ typedef struct{
 
 round *play;//array of all rounds
 
-unsigned long int rounds;//number ou round in the array
+long int rounds;//number ou round in the array
 
 unsigned char gettime(void){//get time in seconds since last call to this function
 	now = clock();//get new clock
@@ -53,6 +57,12 @@ unsigned char gettime(void){//get time in seconds since last call to this functi
 
 void help(void){//print out usage
 	printf("To start, do \"rps {name}\" to login as that user, and do \"rpc\" to login as guest user.\nEach new user will create a new save file in running directory containing all rounds play'd by that user, time since last round, and when he started or quit.\nUsername of \"guest\" will login as a guest.\nAfter that command, you can type in any word starting with \'r\' or \'R\' to play as rock, \'p\' or \'P\' to play as paper, and 's' or 'S' to play as scissors.\nAny command starting with \'e\', \'E\', \'q\', or \'Q\' will act as exit command quitting the game.\nIf login was \"help\", \"-help\", \"--help\" or command started with \'h\' or \'H\', it will print out the help message\nCommand starting with \'c\' or \'C\' will count the win, tie and loss of the current login.\n");
+}
+
+char random(void){//get random r, p, or c
+	srand(time(NULL) + clock());//seed rand
+	int r = rand() % 3;//get rand
+	return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
 }
 
 void add(char p, char c, unsigned char t){//add data to array
@@ -75,17 +85,36 @@ void quit(void){//write current round to file
 }
 
 char choose(void){//choose rock, paper, or scissors
-	unsigned long int n = rounds;//number of rounds
+	long int n = rounds;//number of rounds
+	const long int r = rounds;//number of rounds
 	if (n == 0){//if it was the first game
-		srand(time(NULL) + clock());//seed rand
-		int r = rand() % 3;//get rand
-		return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
+		return random();//choose which to play randomly
 	}
+	int check;//number of rounds to check
+	long int max_hist = (n - MAX_HIST < 0 ? 0 : n - MAX_HIST);//get maximum history
+	for (check = MAX; check >= MIN; check--){//for each number of value to check
+		for (n = rounds - (check * 2) - 1; n >= max_hist; n--){//for each rounds
+			int i;//number of value to check
+			char equal = 1;//if it is equal or not
+			for (i = check - 1; i >= 0; i--){//for each check
+				if (play[r - check + i].c != play[n + i].c || play[r - check + i].p != play[n + i].p)equal--;//decrement if not equal
+			}
+			if (equal == 1) {//if matching, get the right play to win
+				char player = play[n + check].p;//what player is going to play if pridiction was correct
+				switch (player){
+				case 'r':return 'p';
+				case 'p':return 's';
+				case 's':return 'r';
+				case 'q':return random();//choose which to play randomly
+				}
+			}
+		}
+	}
+
+	n = rounds;//reset number of rounds
 	char p = play[n - 1].p, c = play[n - 1].c;//player and computer
-	if (p == c || n == 0){//if it was a tie or the first game
-		srand(time(NULL) + clock());//seed rand
-		int r = rand()%3;//get rand
-		return r == 1 ? 'r' : r == 2 ? 'p' : 's';//choose which to play randomly
+	if (p == c || p == 'q'){//if it was a tie or the first game
+		return random();//choose which to play randomly
 	}
 	else if ((p == 'r' && c == 's') || (p == 'p' && c == 'r') || (p == 's' && c == 'p')){//if player wins
 		switch (c){//go backwords around winning triangle
@@ -126,7 +155,7 @@ void result(char p, char c){//display result from computer calculation and playr
 }
 
 void count(void){
-	unsigned long int w = 0, t = 0, l = 0, i;//win's ties, and losses
+	long int w = 0, t = 0, l = 0, i;//win's ties, and losses
 	char p, c;//player and computer
 	for (i = 0; i < rounds; i++){//for each object
 		p = play[i].p, c = play[i].c;//player and computer
